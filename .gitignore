@@ -1,0 +1,22 @@
+# === 环境与密钥 ===
+.env
+.venv/
+
+# === Python 缓存 ===
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+
+# === 用户数据目录 ===
+reports/
+alerts/
+data/
+watches/
+vault/
+profile/
+
+# === Claude Code 本地配置 ===
+.claude/settings.local.json
+.claude/archive/
