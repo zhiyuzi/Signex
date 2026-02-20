@@ -470,29 +470,6 @@ wheels = [
 ]
 
 [[package]]
-name = "intel-station"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "beautifulsoup4" },
-    { name = "exa-py" },
-    { name = "feedparser" },
-    { name = "firecrawl-py" },
-    { name = "httpx" },
-    { name = "python-dotenv" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "beautifulsoup4", specifier = ">=4.14" },
-    { name = "exa-py", specifier = ">=2.4" },
-    { name = "feedparser", specifier = ">=6.0" },
-    { name = "firecrawl-py", specifier = ">=4.0" },
-    { name = "httpx", specifier = ">=0.28" },
-    { name = "python-dotenv", specifier = ">=1.2" },
-]
-
-[[package]]
 name = "jiter"
 version = "0.13.0"
 source = { registry = "https://pypi.org/simple" }
@@ -962,6 +939,29 @@ name = "sgmllib3k"
 version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/9e/bd/3704a8c3e0942d711c1299ebf7b9091930adae6675d7c8f476a7ce48653c/sgmllib3k-1.0.0.tar.gz", hash = "sha256:7868fb1c8bfa764c1ac563d3cf369c381d1325d36124933a726f29fcdaa812e9", size = 5750, upload-time = "2010-08-24T14:33:52.445Z" }
+
+[[package]]
+name = "signex"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "beautifulsoup4" },
+    { name = "exa-py" },
+    { name = "feedparser" },
+    { name = "firecrawl-py" },
+    { name = "httpx" },
+    { name = "python-dotenv" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "beautifulsoup4", specifier = ">=4.14" },
+    { name = "exa-py", specifier = ">=2.4" },
+    { name = "feedparser", specifier = ">=6.0" },
+    { name = "firecrawl-py", specifier = ">=4.0" },
+    { name = "httpx", specifier = ">=0.28" },
+    { name = "python-dotenv", specifier = ">=1.2" },
+]
 
 [[package]]
 name = "sniffio"

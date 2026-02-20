@@ -1,11 +1,11 @@
 ---
 name: init
-description: 初始化 IntelStation 项目。创建用户数据目录和模板文件。幂等执行，不会覆盖已有内容。
+description: 初始化 Signex 项目。创建用户数据目录和模板文件。幂等执行，不会覆盖已有内容。
 ---
 
 # /init — 项目初始化
 
-执行以下步骤初始化 IntelStation。**幂等原则：只创建缺失的目录和文件，绝不覆盖已有内容。**
+执行以下步骤初始化 Signex。**幂等原则：只创建缺失的目录和文件，绝不覆盖已有内容。**
 
 ## 1. 创建目录
 
@@ -58,7 +58,7 @@ description: 初始化 IntelStation 项目。创建用户数据目录和模板�
 
 ## 3. 初始化数据库
 
-如果 `data/intel.db` 不存在，运行：
+如果 `data/signex.db` 不存在，运行：
 
 ```bash
 uv run python -c "from src.store.database import Database; db = Database(); db.init(); db.close()"

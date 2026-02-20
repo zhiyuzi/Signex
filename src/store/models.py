@@ -1,4 +1,4 @@
-"""Data models for IntelStation V2."""
+"""Data models for Signex."""
 
 from __future__ import annotations
 

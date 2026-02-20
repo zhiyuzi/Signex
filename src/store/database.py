@@ -1,4 +1,4 @@
-"""SQLite database wrapper for IntelStation V2."""
+"""SQLite database wrapper for Signex."""
 
 import sqlite3
 import json
@@ -12,7 +12,7 @@ from src.store.models import SensorItem
 class Database:
     """SQLite database for storing sensor items and analysis records."""
 
-    def __init__(self, db_path: str = "data/intel.db"):
+    def __init__(self, db_path: str = "data/signex.db"):
         self.db_path = db_path
         self.connection = None
 

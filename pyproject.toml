@@ -1,5 +1,5 @@
 [project]
-name = "intel-station"
+name = "signex"
 version = "0.1.0"
 description = "Intent-driven personal intelligence agent"
 requires-python = ">=3.11"

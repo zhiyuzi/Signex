@@ -39,7 +39,7 @@ def extract_with_bs4(url: str, client: httpx.Client) -> dict:
     from bs4 import BeautifulSoup
 
     response = client.get(url, headers={
-        "User-Agent": "IntelStation/1.0 (personal research tool)"
+        "User-Agent": "Signex/1.0 (personal research tool)"
     }, follow_redirects=True)
     response.raise_for_status()
 

@@ -51,7 +51,7 @@ def fetch(feeds: list[str], max_per_feed: int = 20) -> dict:
     with httpx.Client(timeout=15.0, follow_redirects=True) as client:
         for feed_url in feeds:
             try:
-                response = client.get(feed_url, headers={"User-Agent": "IntelStation/1.0 RSS Reader"})
+                response = client.get(feed_url, headers={"User-Agent": "Signex/1.0 RSS Reader"})
                 response.raise_for_status()
                 content = response.text
 

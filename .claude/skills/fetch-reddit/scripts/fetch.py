@@ -13,7 +13,7 @@ for _stream in ('stdin', 'stdout', 'stderr'):
 import httpx
 from datetime import datetime, timezone
 
-USER_AGENT = "IntelStation/1.0 (personal research tool)"
+USER_AGENT = "Signex/1.0 (personal research tool)"
 BASE_URL = "https://www.reddit.com"
 
 
