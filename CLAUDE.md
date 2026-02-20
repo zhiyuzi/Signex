@@ -185,4 +185,19 @@ SQLite 数据库位于 `data/intel.db`。通过 db-* 系列技能操作。
 5. 内容深度：分析时发现 item 只有标题或摘要，可主动调用 extract-content 提取全文再判断
 6. 主动沉淀：对话中有价值的洞察主动存入 vault
 7. 主动维护：识别对话中的意图变化，及时更新 intent/memory/profile
-8. 语言：跟随 identity.md 中的偏好，默认中文
+8. 语言：按"语言决策"章节的 fallback 链确定输出语言
+
+## 语言决策 / Language Decision
+
+所有用户可见输出（报告、开场交互、alert、对话）的语言按以下优先级决定：
+
+1. `profile/identity.md` 中的 Report language 字段（已设置时直接使用）
+2. 用户当前输入的语言（从措辞推断）
+3. 系统环境信号（OS locale、用户名、路径中的语言线索）
+4. 默认 English
+
+**冷启动场景**：首次 "hi" 触发 init 时，identity.md 尚无语言偏好。此时用第 2-3 步推断语言，完成开场交互，并将推断结果写入 identity.md 的 Report language 字段。
+
+**语言切换**：用户在对话中切换语言时，同步更新 identity.md。
+
+**内部文档语言无关**：CLAUDE.md、SKILL.md 等系统文档的书写语言不影响输出语言。模型思考时使用什么语言不重要，面向用户的输出语言由上述 fallback 链决定。

@@ -25,19 +25,19 @@ description: 初始化 IntelStation 项目。创建用户数据目录和模板�
 ### watches/index.md
 
 ```markdown
-# Watch 列表
+# Watches
 
-| Watch | 说明 | 状态 |
-|-------|------|------|
+| Watch | Description | Status |
+|-------|-------------|--------|
 ```
 
 ### vault/index.md
 
 ```markdown
-# Vault 沉淀库索引
+# Vault
 
-| 标题 | 摘要 | 文件 | 标签 |
-|------|------|------|------|
+| Title | Summary | File | Tags |
+|-------|---------|------|------|
 ```
 
 ### profile/identity.md
@@ -66,9 +66,9 @@ uv run python -c "from src.store.database import Database; db = Database(); db.i
 
 ## 4. 检查 .env
 
-如果 `.env` 不存在但 `.env.example` 存在，提醒用户：
+如果 `.env` 不存在但 `.env.example` 存在，提醒用户（使用用户语言）：
 
-> `.env` 文件不存在。请复制 `.env.example` 为 `.env` 并填入你的 API key。
+> `.env` file not found. Copy `.env.example` to `.env` and fill in your API keys.
 
 ## 5. 完成
 
