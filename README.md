@@ -42,10 +42,10 @@ Architecturally, **Claude Code IS the runtime.** There is no standalone app, ser
 
 | Concept | What it does |
 |---------|-------------|
-| **Watch** (监控哨) | A continuous monitoring intent. Defines what direction to watch and what signals matter. |
-| **Sensor** (探针) | Data collection probes. Each sensor fetches from a specific source — Hacker News, GitHub, Reddit, search APIs, RSS, etc. |
-| **Lens** (视角) | Analysis perspectives. Choose how to look at the data — deep insight, quick brief, pro/con evaluation, or timeline trace. |
-| **Vault** (沉淀库) | Cross-watch insight storage. Valuable findings that transcend individual watches get deposited here. |
+| **Watch** | A continuous monitoring intent. Defines what direction to watch and what signals matter. |
+| **Sensor** | Data collection probes. Each sensor fetches from a specific source — Hacker News, GitHub, Reddit, search APIs, RSS, etc. |
+| **Lens** | Analysis perspectives. Choose how to look at the data — deep insight, quick brief, pro/con evaluation, or timeline trace. |
+| **Vault** | Cross-watch insight storage. Valuable findings that transcend individual watches get deposited here. |
 
 ## Architecture
 
