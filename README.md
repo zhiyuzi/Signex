@@ -6,7 +6,7 @@
 
 **Signal + Nexus — where signals converge.**
 
-A personal intelligence agent that runs entirely inside [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
+A personal intelligence agent that runs in both [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and Codex.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg)](https://www.python.org/)
@@ -36,7 +36,12 @@ Signex does this for you. Describe what you care about in one sentence, and it a
 
 Signex is your AI intelligence analyst. You define what you care about (a "Watch"), and it autonomously collects data from multiple sources, analyzes it through different lenses, and delivers actionable reports. It remembers your feedback and adjusts future analysis accordingly.
 
-Architecturally, **Claude Code IS the runtime.** There is no standalone app, server, or CLI wrapper. The agent's behavior is defined entirely in `CLAUDE.md`, and its capabilities are modular skills in `.claude/skills/`. You interact with it by talking to Claude Code.
+Architecturally, Signex is now **dual-runtime**:
+- Claude behavior is defined in `CLAUDE.md`
+- Codex behavior is defined in `AGENTS.md`
+- Both runtimes reuse the same `.claude/skills/*/scripts` implementation
+
+This keeps one source of truth for execution while supporting both interactive environments.
 
 ## Core Concepts
 
@@ -119,6 +124,7 @@ flowchart TB
 - [Python 3.11+](https://www.python.org/)
 - [uv](https://docs.astral.sh/uv/) (Python package manager)
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (the CLI)
+- Codex CLI
 
 ### Setup
 
@@ -134,8 +140,12 @@ uv sync
 cp .env.example .env
 # Edit .env with your API keys
 
-# Start Claude Code in the project directory
+# Runtime option A: Claude Code
 claude
+
+# Runtime option B: Codex helper CLI
+uv run signex init
+uv run signex hi
 ```
 
 ### First Run
@@ -213,8 +223,10 @@ Sensors fire, data flows into SQLite, the lens analyzes, and you get a report.
 
 ```
 signex/
-├── CLAUDE.md                  # Agent behavior definition (the brain)
+├── CLAUDE.md                  # Claude runtime behavior definition
+├── AGENTS.md                  # Codex runtime behavior definition
 ├── .claude/skills/            # All skills (sensor, lens, db, action)
+├── docs/runtime-compat.md     # Runtime mapping between Claude and Codex
 ├── profile/identity.md        # User identity & preferences
 ├── watches/                   # Watch definitions
 │   ├── index.md               # Watch registry
@@ -228,6 +240,8 @@ signex/
 ├── reports/{date}/{watch}/    # Analysis output
 ├── alerts/{date}/             # High-signal alerts
 ├── data/signex.db             # SQLite database
+├── scripts/signex             # Local helper entrypoint for Codex runtime
+├── src/runtime/               # Codex compatibility runtime layer
 ├── src/                       # Python scripts (HTTP + SQLite only)
 └── .env                       # API keys (not committed)
 ```

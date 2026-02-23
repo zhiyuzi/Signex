@@ -6,7 +6,7 @@
 
 **Signal + Nexus — 信号汇聚之处。**
 
-个人情报 Agent，完全运行在 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 之上。
+个人情报 Agent，可运行在 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 与 Codex。
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg)](https://www.python.org/)
@@ -36,7 +36,12 @@ Signex 替你干这件事。你用一句话描述关注方向，它自动从 15+
 
 Signex 是你的 AI 情报分析师。你定义关注方向（Watch），它自主从多个数据源采集信息、用不同视角分析、生成可行动的报告。它会记住你的反馈，下次分析自动调整。
 
-架构上，**Claude Code 就是运行时** — 没有独立的 app、server 或 CLI 包装。Agent 的行为完全由 `CLAUDE.md` 定义，能力以模块化 skill 的形式存放在 `.claude/skills/` 中。你直接和 Claude Code 对话来使用它。
+架构上，Signex 现在是**双运行时**：
+- Claude 侧行为定义在 `CLAUDE.md`
+- Codex 侧行为定义在 `AGENTS.md`
+- 两边共用同一套 `.claude/skills/*/scripts` 作为执行实现
+
+这样可以在不分叉能力实现的前提下，同时支持两种交互环境。
 
 ## 核心概念
 
@@ -119,6 +124,7 @@ flowchart TB
 - [Python 3.11+](https://www.python.org/)
 - [uv](https://docs.astral.sh/uv/)（Python 包管理器）
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code)（CLI 工具）
+- Codex CLI
 
 ### 安装
 
@@ -134,8 +140,12 @@ uv sync
 cp .env.example .env
 # 编辑 .env 填入你的 API 密钥
 
-# 在项目目录启动 Claude Code
+# 运行方式 A：Claude Code
 claude
+
+# 运行方式 B：Codex 辅助命令
+uv run signex init
+uv run signex hi
 ```
 
 ### 第一次使用
@@ -213,8 +223,10 @@ Signex 根据你的意图创建 Watch，选择合适的 Sensor，准备就绪。
 
 ```
 signex/
-├── CLAUDE.md                  # Agent 行为定义（大脑）
+├── CLAUDE.md                  # Claude 运行时行为定义
+├── AGENTS.md                  # Codex 运行时行为定义
 ├── .claude/skills/            # 所有 skill（sensor、lens、db、action）
+├── docs/runtime-compat.md     # Claude/Codex 运行时映射
 ├── profile/identity.md        # 用户画像
 ├── watches/                   # Watch 定义
 │   ├── index.md               # Watch 索引
@@ -228,6 +240,8 @@ signex/
 ├── reports/{date}/{watch}/    # 分析报告
 ├── alerts/{date}/             # 高信号警报
 ├── data/signex.db             # SQLite 数据库
+├── scripts/signex             # Codex 本地入口脚本
+├── src/runtime/               # Codex 兼容运行时层
 ├── src/                       # Python 脚本（仅 HTTP 调用 + SQLite 操作）
 └── .env                       # API 密钥（不提交）
 ```

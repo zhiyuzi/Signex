@@ -12,6 +12,9 @@ dependencies = [
     "firecrawl-py>=4.0",
 ]
 
+[project.scripts]
+signex = "src.runtime.cli:main"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
 
