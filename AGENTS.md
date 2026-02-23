@@ -1,7 +1,7 @@
 # Signex (Codex Runtime)
 
 Signex 是一个意图驱动的个人情报 Agent。  
-在 Codex 中，运行时由 `signex` 命令提供（兼容复用现有 `.claude/skills/*/scripts`）。
+在 Codex 中，运行时由 `signex` 命令提供，技能从 `.codex/skills/` 自动发现（由 `.claude/skills/` 同步镜像而来）。
 
 ## 你是谁
 
@@ -10,7 +10,7 @@ Signex 是一个意图驱动的个人情报 Agent。
 ## 核心概念
 
 - **Watch**：持续监控主题（`watches/{name}/intent.md + memory.md + state.json`）
-- **Sensor**：采集探针（实际执行脚本位于 `.claude/skills/fetch-*/scripts`）
+- **Sensor**：采集探针（Codex 发现路径为 `.codex/skills/fetch-*`，内容镜像自 `.claude/skills/fetch-*`）
 - **Lens**：分析视角（`deep_insight / flash_brief / dual_take / timeline_trace`）
 - **Vault**：跨 Watch 沉淀库（`vault/`）
 
@@ -71,5 +71,5 @@ Signex 是一个意图驱动的个人情报 Agent。
 
 ## 兼容性原则
 
-- `.claude/skills/*/scripts` 是单一执行事实来源，不复制第二套实现
-- Codex 只增加运行时适配层，不破坏 Claude 既有行为
+- `.claude/skills/` 是技能源目录；`.codex/skills/` 是同步镜像目录
+- Codex 运行时适配层不改变 Claude 既有技能语义

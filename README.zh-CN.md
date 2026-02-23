@@ -39,7 +39,8 @@ Signex 是你的 AI 情报分析师。你定义关注方向（Watch），它自�
 架构上，Signex 现在是**双运行时**：
 - Claude 侧行为定义在 `CLAUDE.md`
 - Codex 侧行为定义在 `AGENTS.md`
-- 两边共用同一套 `.claude/skills/*/scripts` 作为执行实现
+- `.claude/skills/` 作为技能事实源目录
+- `.codex/skills/` 作为 Codex 原生发现所需的同步镜像目录
 
 这样可以在不分叉能力实现的前提下，同时支持两种交互环境。
 
@@ -226,6 +227,8 @@ signex/
 ├── CLAUDE.md                  # Claude 运行时行为定义
 ├── AGENTS.md                  # Codex 运行时行为定义
 ├── .claude/skills/            # 所有 skill（sensor、lens、db、action）
+├── .codex/skills/             # Codex 技能发现用同步镜像
+├── .codex/commands/           # Codex 命令发现用同步镜像
 ├── docs/runtime-compat.md     # Claude/Codex 运行时映射
 ├── profile/identity.md        # 用户画像
 ├── watches/                   # Watch 定义
@@ -241,6 +244,7 @@ signex/
 ├── alerts/{date}/             # 高信号警报
 ├── data/signex.db             # SQLite 数据库
 ├── scripts/signex             # Codex 本地入口脚本
+├── scripts/sync-codex-skills  # 同步 .claude 到 .codex 的脚本
 ├── src/runtime/               # Codex 兼容运行时层
 ├── src/                       # Python 脚本（仅 HTTP 调用 + SQLite 操作）
 └── .env                       # API 密钥（不提交）

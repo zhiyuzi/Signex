@@ -39,7 +39,8 @@ Signex is your AI intelligence analyst. You define what you care about (a "Watch
 Architecturally, Signex is now **dual-runtime**:
 - Claude behavior is defined in `CLAUDE.md`
 - Codex behavior is defined in `AGENTS.md`
-- Both runtimes reuse the same `.claude/skills/*/scripts` implementation
+- `.claude/skills/` is the source-of-truth skill tree
+- `.codex/skills/` is a synced mirror for Codex-native skill discovery
 
 This keeps one source of truth for execution while supporting both interactive environments.
 
@@ -226,6 +227,8 @@ signex/
 ├── CLAUDE.md                  # Claude runtime behavior definition
 ├── AGENTS.md                  # Codex runtime behavior definition
 ├── .claude/skills/            # All skills (sensor, lens, db, action)
+├── .codex/skills/             # Synced skill mirror for Codex discovery
+├── .codex/commands/           # Synced command mirror for Codex discovery
 ├── docs/runtime-compat.md     # Runtime mapping between Claude and Codex
 ├── profile/identity.md        # User identity & preferences
 ├── watches/                   # Watch definitions
@@ -241,6 +244,7 @@ signex/
 ├── alerts/{date}/             # High-signal alerts
 ├── data/signex.db             # SQLite database
 ├── scripts/signex             # Local helper entrypoint for Codex runtime
+├── scripts/sync-codex-skills  # Sync .claude skills/commands into .codex
 ├── src/runtime/               # Codex compatibility runtime layer
 ├── src/                       # Python scripts (HTTP + SQLite only)
 └── .env                       # API keys (not committed)

@@ -1,10 +1,12 @@
 # Runtime Compatibility (Claude + Codex)
 
-This document defines how Signex runs in both Claude Code and Codex without duplicating skill implementations.
+This document defines how Signex runs in both Claude Code and Codex with a discoverable Codex skill mirror.
 
 ## Design Choice
 
-- Keep `.claude/skills/*/scripts` as the single execution implementation.
+- Keep `.claude/skills/` as the source-of-truth skill tree.
+- Mirror `.claude/skills/` to `.codex/skills/` for Codex-native skill discovery.
+- Use `./scripts/sync-codex-skills` to refresh the mirror.
 - Add a lightweight Codex runtime layer under `src/runtime/`.
 - Keep `CLAUDE.md` for Claude behavior and add `AGENTS.md` for Codex behavior.
 
@@ -37,7 +39,8 @@ signex run --watch <name> [--lens deep_insight|flash_brief|dual_take|timeline_tr
 signex stats
 ```
 
-## Non-goals
+## Guardrails
 
-- No mirror `.codex/skills/` directory.
-- No rewrite of existing `.claude/skills` script internals.
+- Edit skills under `.claude/skills/` first, then sync to `.codex/skills/`.
+- Do not hand-edit `.codex/skills/` unless you know the sync impact.
+- No behavior rewrite in sensor/lens/db scripts unless intentionally needed.

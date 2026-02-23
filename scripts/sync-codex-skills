@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+mkdir -p "${ROOT_DIR}/.codex/skills" "${ROOT_DIR}/.codex/commands"
+rsync -a --delete --exclude "__pycache__" "${ROOT_DIR}/.claude/skills/" "${ROOT_DIR}/.codex/skills/"
+rsync -a --delete --exclude "__pycache__" "${ROOT_DIR}/.claude/commands/" "${ROOT_DIR}/.codex/commands/"
+
+echo "Synced .claude -> .codex skills/commands."
