@@ -90,25 +90,24 @@ flowchart TB
   end
 
   L1 & L2 & L3 & L4 & L5 --> R["报告 & 警报"]:::out
-  R --> V["沉淀库"]:::vault
   R --> U["你"]:::actor
 
   U -. "反馈 · 校准信号 · 调整方向" .-> W
-  U -. "跨域洞察" .-> V
+  U -. "跨域洞察" .-> V["沉淀库"]:::vault
 
-  classDef core      fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px,color:#0F172A
-  classDef sensor    fill:#ECFEFF,stroke:#06B6D4,stroke-width:1.6px,color:#0F172A
-  classDef sensorAlt fill:#F0FDFA,stroke:#14B8A6,stroke-width:1.6px,color:#0F172A,stroke-dasharray:4 3
-  classDef store     fill:#F1F5F9,stroke:#64748B,stroke-width:1.7px,color:#0F172A
-  classDef decision  fill:#FFFFFF,stroke:#0EA5E9,stroke-width:2px,color:#0F172A
-  classDef lens      fill:#FFF7ED,stroke:#F59E0B,stroke-width:1.6px,color:#0F172A
-  classDef lensAlt   fill:#FFFBEB,stroke:#F59E0B,stroke-width:1.6px,color:#0F172A,stroke-dasharray:4 3
-  classDef out       fill:#ECFDF5,stroke:#10B981,stroke-width:1.8px,color:#0F172A
-  classDef vault     fill:#FDF4FF,stroke:#A855F7,stroke-width:1.6px,color:#0F172A
-  classDef actor     fill:#FFF1F2,stroke:#FB7185,stroke-width:1.6px,color:#0F172A
+  classDef core      fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px,color:#0F172A,rx:14,ry:14
+  classDef sensor    fill:#ECFEFF,stroke:#06B6D4,stroke-width:1.6px,color:#0F172A,rx:12,ry:12
+  classDef sensorAlt fill:#F0FDFA,stroke:#14B8A6,stroke-width:1.6px,color:#0F172A,stroke-dasharray:4 3,rx:12,ry:12
+  classDef store     fill:#F1F5F9,stroke:#64748B,stroke-width:1.7px,color:#0F172A,rx:14,ry:14
+  classDef decision  fill:#FFFFFF,stroke:#0EA5E9,stroke-width:2px,color:#0F172A,rx:18,ry:18
+  classDef lens      fill:#FFF7ED,stroke:#F59E0B,stroke-width:1.6px,color:#0F172A,rx:12,ry:12
+  classDef lensAlt   fill:#FFFBEB,stroke:#F59E0B,stroke-width:1.6px,color:#0F172A,stroke-dasharray:4 3,rx:12,ry:12
+  classDef out       fill:#ECFDF5,stroke:#10B981,stroke-width:1.8px,color:#0F172A,rx:14,ry:14
+  classDef vault     fill:#FDF4FF,stroke:#A855F7,stroke-width:1.6px,color:#0F172A,rx:14,ry:14
+  classDef actor     fill:#FFF1F2,stroke:#FB7185,stroke-width:1.6px,color:#0F172A,rx:14,ry:14
 
-  style Sensors fill:transparent,stroke:#CBD5E1,stroke-width:1.2px
-  style Lenses  fill:transparent,stroke:#CBD5E1,stroke-width:1.2px
+  style Sensors fill:transparent,stroke:#CBD5E1,stroke-width:1.2px,rx:16,ry:16
+  style Lenses  fill:transparent,stroke:#CBD5E1,stroke-width:1.2px,rx:16,ry:16
 
   linkStyle default stroke:#94A3B8,stroke-width:1.5px
 ```
