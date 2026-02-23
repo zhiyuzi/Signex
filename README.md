@@ -50,36 +50,67 @@ Architecturally, **Claude Code IS the runtime.** There is no standalone app, ser
 ## Architecture
 
 ```mermaid
-flowchart LR
-    W[Watch\nintent.md + memory.md] --> S
+%%{init: {
+  "theme": "base",
+  "flowchart": { "curve": "basis", "nodeSpacing": 42, "rankSpacing": 60 },
+  "themeVariables": {
+    "background": "transparent",
+    "mainBkg": "transparent",
+    "fontFamily": "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+    "fontSize": "14px",
+    "lineColor": "#94A3B8",
+    "textColor": "#0F172A"
+  }
+}}%%
 
-    subgraph Sensors ["Sensors (extensible)"]
-        S[Sensor Selection] --> S1[Hacker News]
-        S --> S2[GitHub Trending]
-        S --> S3[Tavily / Brave / Exa]
-        S --> S4[Reddit / X / V2EX]
-        S --> S5[Product Hunt / RSS / ...]
-        S --> S6[arXiv / OpenAlex]
-        S --> S7[+ Your Own Sensor]
-    end
+flowchart TB
+  W["Watch<br/>intent.md + memory.md"]:::core --> S["Sensor Selection"]:::core
 
-    S1 & S2 & S3 & S4 & S5 & S6 & S7 --> DB[(SQLite)]
+  subgraph Sensors["Sensors (extensible)"]
+    direction TB
+    S --> S1["Hacker News"]:::sensor
+    S --> S2["GitHub Trending"]:::sensor
+    S --> S3["Tavily / Brave / Exa"]:::sensor
+    S --> S4["Reddit / X / V2EX"]:::sensor
+    S --> S5["Product Hunt / RSS / …"]:::sensor
+    S --> S6["arXiv / OpenAlex"]:::sensor
+    S --> S7["+ Your Own Sensor"]:::sensorAlt
+  end
 
-    DB --> L{Lens}
+  S1 & S2 & S3 & S4 & S5 & S6 & S7 --> DB[("SQLite")]:::store
+  DB --> L{"Lens"}:::decision
 
-    subgraph Lenses ["Lenses (extensible)"]
-        L --> L1[Deep Insight]
-        L --> L2[Flash Brief]
-        L --> L3[Dual Take]
-        L --> L4[Timeline Trace]
-        L --> L5[+ Your Own Lens]
-    end
+  subgraph Lenses["Lenses (extensible)"]
+    direction TB
+    L --> L1["Deep Insight"]:::lens
+    L --> L2["Flash Brief"]:::lens
+    L --> L3["Dual Take"]:::lens
+    L --> L4["Timeline Trace"]:::lens
+    L --> L5["+ Your Own Lens"]:::lensAlt
+  end
 
-    L1 & L2 & L3 & L4 & L5 --> R[Reports & Alerts]
-    R --> V[Vault]
-    R --> U[You]
-    U -. "feedback · calibrate signals · adjust scope" .-> W
-    U -. "cross-watch insights" .-> V
+  L1 & L2 & L3 & L4 & L5 --> R["Reports & Alerts"]:::out
+  R --> V["Vault"]:::vault
+  R --> U["You"]:::actor
+
+  U -. "feedback · calibrate signals · adjust scope" .-> W
+  U -. "cross-watch insights" .-> V
+
+  classDef core      fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px,color:#0F172A
+  classDef sensor    fill:#ECFEFF,stroke:#06B6D4,stroke-width:1.6px,color:#0F172A
+  classDef sensorAlt fill:#F0FDFA,stroke:#14B8A6,stroke-width:1.6px,color:#0F172A,stroke-dasharray:4 3
+  classDef store     fill:#F1F5F9,stroke:#64748B,stroke-width:1.7px,color:#0F172A
+  classDef decision  fill:#FFFFFF,stroke:#0EA5E9,stroke-width:2px,color:#0F172A
+  classDef lens      fill:#FFF7ED,stroke:#F59E0B,stroke-width:1.6px,color:#0F172A
+  classDef lensAlt   fill:#FFFBEB,stroke:#F59E0B,stroke-width:1.6px,color:#0F172A,stroke-dasharray:4 3
+  classDef out       fill:#ECFDF5,stroke:#10B981,stroke-width:1.8px,color:#0F172A
+  classDef vault     fill:#FDF4FF,stroke:#A855F7,stroke-width:1.6px,color:#0F172A
+  classDef actor     fill:#FFF1F2,stroke:#FB7185,stroke-width:1.6px,color:#0F172A
+
+  style Sensors fill:transparent,stroke:#CBD5E1,stroke-width:1.2px
+  style Lenses  fill:transparent,stroke:#CBD5E1,stroke-width:1.2px
+
+  linkStyle default stroke:#94A3B8,stroke-width:1.5px
 ```
 
 ## Quick Start
