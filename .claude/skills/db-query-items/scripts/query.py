@@ -19,9 +19,8 @@ from src.store.database import Database
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--watch", help="Watch name for unanalyzed query")
-    parser.add_argument("--unanalyzed", action="store_true", help="Get unanalyzed items")
     parser.add_argument("--source", help="Filter by source")
+    parser.add_argument("--watch", help="Filter by watch name")
     parser.add_argument("--since", help="Filter by start time (ISO 8601)")
     parser.add_argument("--until", help="Filter by end time (ISO 8601)")
     args = parser.parse_args()
@@ -30,10 +29,11 @@ def main():
     db.init()
 
     try:
-        if args.watch and args.unanalyzed:
-            rows = db.get_unanalyzed_items(args.watch, source=args.source)
-        else:
-            rows = db.get_items(source=args.source, since=args.since, until=args.until)
+        rows = db.get_items(source=args.source, since=args.since, until=args.until)
+
+        # Filter by watch_name if specified
+        if args.watch:
+            rows = [r for r in rows if r.get("watch_name") == args.watch]
 
         items = []
         for row in rows:

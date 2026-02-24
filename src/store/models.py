@@ -18,3 +18,4 @@ class SensorItem:
     content: str = ""
     metadata: dict[str, Any] = field(default_factory=dict)
     published_at: datetime | None = None
+    watch_name: str | None = None

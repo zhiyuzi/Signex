@@ -3,7 +3,6 @@
 import io
 import json
 import os
-import re
 import sys
 from datetime import datetime
 
@@ -23,7 +22,6 @@ def clean_string(s: str) -> str:
     """清理字符串中的无效 Unicode 代理字符（Windows 特有问题）"""
     if not isinstance(s, str):
         return s
-    # 移除 lone surrogates（单独的代理字符无法编码为 UTF-8）
     return s.encode('utf-8', errors='surrogatepass').decode('utf-8', errors='ignore')
 
 
@@ -35,10 +33,11 @@ def main():
         sys.exit(1)
 
     items_data = input_data.get("items", [])
+    watch_name = input_data.get("watch_name")
     sensor_success = input_data.get("success", True)
 
     if not items_data:
-        print(json.dumps({"success": True, "inserted": 0, "total": 0}, ensure_ascii=False))
+        print(json.dumps({"success": True, "inserted": 0, "total": 0, "item_ids": []}, ensure_ascii=False))
         return
 
     items = []
@@ -57,20 +56,25 @@ def main():
             url=clean_string(d.get("url", "")),
             content=clean_string(d.get("content", "")),
             metadata=d.get("metadata", {}),
-            published_at=published_at
+            published_at=published_at,
         ))
 
     db = Database()
     db.init()
     try:
-        inserted = db.save_items(items)
+        result = db.save_items(items, watch_name=watch_name)
 
         # Update source health
         sources_seen = set(item.source for item in items)
         for src in sources_seen:
             db.update_source_health(src, sensor_success)
 
-        print(json.dumps({"success": True, "inserted": inserted, "total": len(items)}, ensure_ascii=False))
+        print(json.dumps({
+            "success": True,
+            "inserted": result["inserted"],
+            "total": len(items),
+            "item_ids": result["item_ids"],
+        }, ensure_ascii=False))
     finally:
         db.close()
 

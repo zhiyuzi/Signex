@@ -55,7 +55,7 @@
 **输出两层内容**：
 
 1. **态势感知**（3-5 句）：各 Watch 运行状态概览，哪些到期该跑了，今天有没有新报告或 alert。
-2. **行动建议**（2-3 条）：结合 intent、memory 和用户画像，给出具体的、可直接回复"好"就能执行的建议。不要泛泛地说"你可以运行 watch"，而是像了解用户的分析师一样给出有上下文的建议。
+2. **行动建议**（2-3 条）：结合 intent、memory 和用户画像，给出具体的、可直接回复"好"就能执行的建议。不要泛泛地说"你可以运行 watch"，而是像了解用户的分析师一样给出有上下文的建议。如果有 Watch 尚未配置 webhook 推送，可以作为建议之一提及。
 
 > 示例（仅供参考风格，实际内容必须基于真实数据）：
 >
@@ -70,17 +70,19 @@
 
 ## 运行 Watch 的流程
 
-当用户要求运行某个 Watch 时，使用 `run-watch` 技能。该技能描述了完整的采集→分析→报告流程。你需要：
+当用户要求运行某个 Watch 时，使用 `run-watch` 技能。核心原则：**采集什么就分析什么，不翻旧账。**
 
 1. 读取 Watch 的 intent.md 和 memory.md
 2. 根据意图决定需要哪些 Sensor（不要盲目调用所有 sensor）
 3. 对 search 类 sensor，自己生成合适的搜索词（包含年月，注意时效性）
-4. 将采集的数据存入数据库（使用 db-save-items 技能）
-5. 获取未分析的数据（使用 db-query-items 技能）
-6. 选择合适的 Lens 分析数据并生成报告（分析过程中根据 intent 和 memory 自然识别高信号内容——每个 Watch 的"重要"标准不同）
+4. 采集数据，存入数据库（带 watch_name 归属标记），收集返回的 item_ids
+5. 将本次采集的数据精简后再分析——只保留标题、摘要、链接，去掉原始 metadata 等无关字段。完整数据已入库，需要深挖时再取。具体精简方式见 `run-watch` 技能说明
+6. 选择合适的 Lens，用精简后的数据进行分析并生成报告（根据 intent 和 memory 自然识别高信号内容——每个 Watch 的"重要"标准不同）
 7. 保存报告到 reports/{date}/{watch-name}/；如有高信号内容，同时输出 alert
-8. 更新 state.json 中的 last_run
-9. 收尾交互：根据本次报告的具体内容，主动与用户对话（校准信号、探测深挖意愿、建议沉淀洞察等）。
+8. 记录分析（db-save-analysis，传入步骤 4 的 item_ids）
+9. 更新 state.json 中的 last_run
+10. 推送通知：如果该 Watch 配置了 webhook 且已启用，调用 webhook-notify 推送报告摘要
+11. 收尾交互：根据本次报告的具体内容，主动与用户对话（校准信号、探测深挖意愿、建议沉淀洞察等）
 
 ## Lens 选择指引
 
@@ -175,6 +177,10 @@ SQLite 数据库位于 `data/signex.db`。通过 db-* 系列技能操作。
 - 分析报告：`reports/{YYYY-MM-DD}/{watch-name}/insights.md`
 - 原始情报：`reports/{YYYY-MM-DD}/{watch-name}/raw_intel.md`（可选）
 - 高信号提醒：`alerts/{YYYY-MM-DD}/{watch-name}.md`
+
+## Webhook 配置引导
+
+用户要配置 webhook 时，使用 `webhook-setup` 技能。
 
 ## 决策原则
 

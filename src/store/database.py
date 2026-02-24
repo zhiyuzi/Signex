@@ -37,9 +37,16 @@ class Database:
                 metadata JSON,
                 fetched_at TIMESTAMP NOT NULL,
                 published_at TIMESTAMP,
+                watch_name TEXT,
                 UNIQUE(source, source_id)
             )
         """)
+
+        # Migration: add watch_name column for existing databases
+        try:
+            cursor.execute("ALTER TABLE items ADD COLUMN watch_name TEXT")
+        except sqlite3.OperationalError:
+            pass  # Column already exists
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS analyses (
@@ -73,23 +80,24 @@ class Database:
 
         self.connection.commit()
 
-    def save_items(self, items: list[SensorItem]) -> int:
+    def save_items(self, items: list[SensorItem], watch_name: str | None = None) -> dict:
         """Save items to database with deduplication.
 
-        Returns count of newly inserted items.
+        Returns {"inserted": count, "item_ids": [list of inserted IDs]}.
         """
         if not self.connection:
             raise RuntimeError("Database not initialized. Call init() first.")
 
         cursor = self.connection.cursor()
         inserted_count = 0
+        item_ids: list[int] = []
 
         for item in items:
             try:
                 cursor.execute("""
                     INSERT OR IGNORE INTO items
-                    (source, source_id, title, url, content, metadata, fetched_at, published_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    (source, source_id, title, url, content, metadata, fetched_at, published_at, watch_name)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     item.source,
                     item.source_id,
@@ -98,16 +106,18 @@ class Database:
                     item.content,
                     json.dumps(item.metadata, ensure_ascii=False) if item.metadata else None,
                     datetime.now(timezone.utc).isoformat(),
-                    item.published_at.isoformat() if item.published_at else None
+                    item.published_at.isoformat() if item.published_at else None,
+                    watch_name or item.watch_name,
                 ))
 
                 if cursor.rowcount > 0:
                     inserted_count += 1
+                    item_ids.append(cursor.lastrowid)
             except sqlite3.Error:
                 continue
 
         self.connection.commit()
-        return inserted_count
+        return {"inserted": inserted_count, "item_ids": item_ids}
 
     def get_items(
         self,
@@ -144,39 +154,6 @@ class Database:
             params.append(until)
 
         query += " ORDER BY fetched_at DESC"
-
-        cursor = self.connection.cursor()
-        cursor.execute(query, params)
-
-        return [dict(row) for row in cursor.fetchall()]
-
-    def get_unanalyzed_items(
-        self,
-        watch_name: str,
-        source: str | None = None
-    ) -> list[dict[str, Any]]:
-        """Get items not yet analyzed by this watch.
-
-        Returns list of item dicts with id included.
-        """
-        if not self.connection:
-            raise RuntimeError("Database not initialized. Call init() first.")
-
-        query = """
-            SELECT i.* FROM items i
-            WHERE i.id NOT IN (
-                SELECT ai.item_id FROM analysis_items ai
-                JOIN analyses a ON ai.analysis_id = a.id
-                WHERE a.watch_name = ?
-            )
-        """
-        params: list[Any] = [watch_name]
-
-        if source:
-            query += " AND i.source = ?"
-            params.append(source)
-
-        query += " ORDER BY i.fetched_at DESC"
 
         cursor = self.connection.cursor()
         cursor.execute(query, params)
