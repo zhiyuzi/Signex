@@ -230,6 +230,7 @@ signex/
 │   └── *.md                   # Individual insight notes
 ├── reports/{date}/{watch}/    # Analysis output
 ├── alerts/{date}/             # High-signal alerts
+├── knowledge/                 # Skill knowledge base (reference docs)
 ├── data/signex.db             # SQLite database
 ├── src/                       # Python scripts (HTTP + SQLite only)
 └── .env                       # API keys (not committed)

@@ -230,6 +230,7 @@ signex/
 │   └── *.md                   # 独立洞察笔记
 ├── reports/{date}/{watch}/    # 分析报告
 ├── alerts/{date}/             # 高信号警报
+├── knowledge/                 # Skill 知识库（参考文档）
 ├── data/signex.db             # SQLite 数据库
 ├── src/                       # Python 脚本（仅 HTTP 调用 + SQLite 操作）
 └── .env                       # API 密钥（不提交）
