@@ -10,7 +10,7 @@
 | 钉钉 | `dingtalk` | 待扩展 |
 | 企业微信 | `wecom` | 待扩展 |
 | Slack | `slack` | 待扩展 |
-| Discord | `discord` | 待扩展 |
+| Discord | `discord` | ✅ 已支持 |
 | Telegram | `telegram` | 待扩展 |
 | Microsoft Teams | `teams` | 待扩展 |
 
@@ -29,6 +29,19 @@
 **自定义关键词**：消息中必须包含指定关键词。建议设为 "Signex"，推送消息默认含 `[Signex]` 前缀。`secret` 留空。
 
 **IP 白名单**：只允许指定 IP 调用。`secret` 留空。
+
+## Discord 配置步骤
+
+1. 打开 Discord 服务器 → 服务器设置 → 整合 → Webhook
+2. 点击"新建 Webhook"
+3. 设置名称（如 "Signex"）并选择推送频道
+4. 复制 Webhook URL
+
+### 注意事项
+
+- Discord Webhook 无签名机制，`secret` 留空
+- 消息长度上限 2000 字符，超长自动截断
+- URL 格式：`https://discord.com/api/webhooks/{id}/{token}`
 
 ## state.json 配置结构
 

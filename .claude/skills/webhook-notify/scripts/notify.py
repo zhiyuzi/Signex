@@ -51,10 +51,28 @@ def send_feishu(url: str, message: str, secret: str | None = None, timeout: int 
     return {"status": "ok"}
 
 
+# --- Discord ---
+
+def send_discord(url: str, message: str, secret: str | None = None, timeout: int = 10) -> dict:
+    payload = {"content": message[:2000]}
+    resp = requests.post(url, json=payload, timeout=timeout)
+
+    if resp.status_code == 204:
+        return {"status": "ok"}
+
+    try:
+        data = resp.json()
+    except Exception:
+        data = {"raw": resp.text}
+
+    return {"status": "error", "error": f"HTTP {resp.status_code}: {data}"}
+
+
 # --- Dispatcher ---
 
 SENDERS = {
     "feishu": send_feishu,
+    "discord": send_discord,
 }
 
 
