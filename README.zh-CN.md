@@ -209,6 +209,7 @@ Signex 根据你的意图创建 Watch，选择合适的 Sensor，准备就绪。
 | `extract-content` | 从 URL 提取文章全文 |
 | `webhook-notify` | 报告生成后推送摘要到 IM 工具（飞书等） |
 | `webhook-setup` | 交互式 Webhook 配置向导 |
+| `setup` | 项目初始化（目录、模板、数据库） |
 | `skill-creator` | 创建新 Skill 的向导 |
 
 ## 项目结构

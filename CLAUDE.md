@@ -42,7 +42,7 @@
 当用户发送 **"Hi"** 时，这是开场交互的触发词。你作为情报分析师"上岗"，给出一份简短的个性化态势简报。
 
 **首先检查初始化状态**：
-检查 `profile/identity.md`、`watches/index.md`、`vault/index.md` 是否存在。如果任何关键文件缺失或目录不存在，先执行 `/init` 命令完成项目初始化，然后再进入正常的开场交互流程。
+检查 `profile/identity.md`、`watches/index.md`、`vault/index.md` 是否存在。如果任何关键文件缺失或目录不存在，先使用 `setup` 技能完成项目初始化，然后再进入正常的开场交互流程。
 
 **读取顺序**：
 1. `profile/identity.md` — 理解用户身份和当前关注
@@ -156,7 +156,7 @@
 
 > 用户："帮我盯一下 AI 新闻产品赛道"
 > → 创建 `watches/ai-news-products/` 目录
-> → 按 `/init` 命令中的 Watch 文件模板初始化 intent.md、memory.md、state.json
+> → 按 `setup` 技能中的 Watch 文件模板初始化 intent.md、memory.md、state.json
 > → 更新 `watches/index.md`
 
 ## Skill 动态拓展
@@ -203,7 +203,7 @@ SQLite 数据库位于 `data/signex.db`。通过 db-* 系列技能操作。
 3. 系统环境信号（OS locale、用户名、路径中的语言线索）
 4. 默认 English
 
-**冷启动场景**：首次 "hi" 触发 init 时，identity.md 尚无语言偏好。此时用第 2-3 步推断语言，完成开场交互，并将推断结果写入 identity.md 的 Report language 字段。
+**冷启动场景**：首次 "hi" 时关键文件缺失，使用 `setup` 技能完成初始化。此时 identity.md 尚无语言偏好，用第 2-3 步推断语言，完成开场交互，并将推断结果写入 identity.md 的 Report language 字段。
 
 **语言切换**：用户在对话中切换语言时，同步更新 identity.md。
 
