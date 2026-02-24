@@ -207,6 +207,8 @@ Sensors fire, data flows into SQLite, the lens analyzes, and you get a report.
 | `save-report` | Write reports and alerts to disk |
 | `update-memory` | Integrate user feedback into watch memory |
 | `extract-content` | Extract full article text from URLs |
+| `webhook-notify` | Push report summary to IM tools (Feishu, etc.) |
+| `webhook-setup` | Interactive webhook configuration wizard |
 | `skill-creator` | Guide for creating new skills |
 
 ## Project Structure

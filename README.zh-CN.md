@@ -207,6 +207,8 @@ Signex 根据你的意图创建 Watch，选择合适的 Sensor，准备就绪。
 | `save-report` | 写入报告和警报 |
 | `update-memory` | 将用户反馈整合到 Watch 记忆 |
 | `extract-content` | 从 URL 提取文章全文 |
+| `webhook-notify` | 报告生成后推送摘要到 IM 工具（飞书等） |
+| `webhook-setup` | 交互式 Webhook 配置向导 |
 | `skill-creator` | 创建新 Skill 的向导 |
 
 ## 项目结构
