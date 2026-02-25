@@ -8,7 +8,7 @@
 |------|--------------|------|
 | 飞书 | `feishu` | ✅ 已支持 |
 | 钉钉 | `dingtalk` | 待扩展 |
-| 企业微信 | `wecom` | 待扩展 |
+| 企业微信 | `wecom` | ✅ 已支持 |
 | Slack | `slack` | 待扩展 |
 | Discord | `discord` | ✅ 已支持 |
 | Telegram | `telegram` | 待扩展 |
@@ -42,6 +42,22 @@
 - Discord Webhook 无签名机制，`secret` 留空
 - 消息长度上限 2000 字符，超长自动截断
 - URL 格式：`https://discord.com/api/webhooks/{id}/{token}`
+
+## 企业微信 (WeCom) 配置步骤
+
+> 前提：必须是企业微信的**内部群**，外部群不支持此功能。
+
+1. 在内部群中点击右上角"更多"设置（三个点图标）
+2. 找到"消息推送"（即 Webhook 功能）
+3. 点击"消息推送" → 添加
+4. 复制生成的 Webhook URL
+
+### 注意事项
+
+- 企业微信 Webhook 无签名机制，`secret` 留空
+- 文本消息长度上限 2048 字符，超长自动截断
+- URL 格式：`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={key}`
+- 官方文档：https://developer.work.weixin.qq.com/document/path/99110 （支持更多消息类型，当前仅使用纯文本）
 
 ## state.json 配置结构
 

@@ -68,11 +68,32 @@ def send_discord(url: str, message: str, secret: str | None = None, timeout: int
     return {"status": "error", "error": f"HTTP {resp.status_code}: {data}"}
 
 
+# --- WeCom (企业微信) ---
+
+def send_wecom(url: str, message: str, secret: str | None = None, timeout: int = 10) -> dict:
+    payload = {"msgtype": "text", "text": {"content": message[:2048]}}
+    resp = requests.post(url, json=payload, timeout=timeout)
+
+    try:
+        data = resp.json()
+    except Exception:
+        data = {"raw": resp.text}
+
+    if resp.status_code != 200:
+        return {"status": "error", "error": f"HTTP {resp.status_code}: {data}"}
+
+    if data.get("errcode", -1) != 0:
+        return {"status": "error", "error": f"WeCom error: {data.get('errmsg', str(data))}"}
+
+    return {"status": "ok"}
+
+
 # --- Dispatcher ---
 
 SENDERS = {
     "feishu": send_feishu,
     "discord": send_discord,
+    "wecom": send_wecom,
 }
 
 

@@ -22,7 +22,7 @@ description: 交互式 Webhook 配置向导。引导用户选择平台、填写 
    - 如果已存在完全相同的配置，告知用户"这个 Webhook 已经配置过了"，询问是否要修改内容偏好或其他设置
    - 如果同平台但不同 URL，正常追加
 4. 引导用户完成配置：
-   - 选平台（飞书、Discord 已支持，其他待扩展）
+   - 选平台（飞书、Discord、企业微信已支持，其他待扩展）
    - 填 Webhook URL（引导用户在 IM 工具中创建机器人获取）
    - 填 secret（可选，飞书签名校验模式需要）
    - 选推送内容偏好（content 字段：summary / brief / key_findings / 自定义）

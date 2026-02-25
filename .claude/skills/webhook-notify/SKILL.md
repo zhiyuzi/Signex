@@ -1,6 +1,6 @@
 ---
 name: webhook-notify
-description: Watch 运行完成后推送通知到 Webhook。读取 state.json 中的 webhooks 配置，检查双层 enabled 开关，自动发送到飞书等平台。
+description: Watch 运行完成后推送通知到 Webhook。读取 state.json 中的 webhooks 配置，检查双层 enabled 开关，自动发送到飞书、Discord、企业微信等平台。
 ---
 
 # webhook-notify 通知推送
