@@ -14,75 +14,67 @@ description: 执行某个 Watch 的完整情报采集与分析流程。当用户
 - 读取 `profile/identity.md` — 用户身份
 
 ### 2. 决定 Sensor 策略
-根据 intent 语义自主选择合适的 Sensor（不要盲目全部调用）：
-- 技术社区信号 → fetch-hacker-news, fetch-v2ex
-- 开源项目趋势 → fetch-github-trending
-- 定向关键词搜索 → fetch-tavily（需要自己生成查询词）
-- 备选/补充网络搜索 → fetch-brave-search（独立索引，不依赖 Google）
-- AI 语义搜索、深度内容发现 → fetch-exa（自然语言查询）
-- 新产品发布、产品趋势 → fetch-product-hunt
-- 用户需求、功能请求、痛点 → fetch-request-hunt
-- 官方博客、changelog、长尾源 → fetch-rss（传入 feed URL）
-- 社区讨论、用户反馈 → fetch-reddit
-- 实时社交信号、产品动态 → fetch-x
-- 新闻报道、行业动态 → fetch-news-api, fetch-gnews
-- 学术论文、预印本、前沿研究 → fetch-arxiv
-- 论文影响力、引用趋势、跨学科学术搜索 → fetch-openalex
+
+⚠️ **必须先读取 `references/workflow.md`**，其中包含：Sensor 选择决策表、搜索词生成规则、每个 Sensor 的完整调用示例。
+
+根据 intent 语义自主选择合适的 Sensor（不要盲目全部调用）。
+
+**防幻觉提醒 — 脚本名和参数格式：**
+- Push 型脚本名为 `fetch.py`：fetch-hacker-news, fetch-github-trending, fetch-v2ex, fetch-product-hunt
+- Search 型脚本名为 `search.py`：fetch-tavily, fetch-brave-search, fetch-exa, fetch-request-hunt, fetch-x, fetch-news-api, fetch-gnews, fetch-arxiv, fetch-openalex
+- 混合型脚本名为 `fetch.py` 但需要 stdin：fetch-reddit, fetch-rss
+- **所有 Search 型 sensor 的查询参数字段名为 `queries`（复数，数组），不是 `query`（单数）**
+- 不确定参数格式时，**必须读取对应 sensor 的 SKILL.md** 确认
 
 ### 3. 采集数据并存入数据库
 依次调用选定的 Sensor skill，每个 sensor 的输出通过管道存入数据库：
 
 ```bash
-# 方式一：sensor 输出管道存库（需要用 jq 或脚本注入 watch_name）
-uv run python .claude/skills/fetch-hacker-news/scripts/fetch.py | uv run python .claude/skills/db-save-items/scripts/save.py
+# Push 型：直接管道，中间注入 watch_name
+uv run python .claude/skills/fetch-hacker-news/scripts/fetch.py | uv run python -c "
+import json, sys; data = json.load(sys.stdin); data['watch_name'] = '{watch-name}'; json.dump(data, sys.stdout)
+" | uv run python .claude/skills/db-save-items/scripts/save.py
 
-# 方式二（推荐）：sensor 输出保存到变量，合并 watch_name 后存库
-# Claude 在调用时自行构造包含 watch_name 的 JSON
+# Search 型：stdin 传参，输出同样管道存库
+echo '{"queries": [...], "days": 7}' | uv run python .claude/skills/fetch-tavily/scripts/search.py | uv run python -c "
+import json, sys; data = json.load(sys.stdin); data['watch_name'] = '{watch-name}'; json.dump(data, sys.stdout)
+" | uv run python .claude/skills/db-save-items/scripts/save.py
 ```
 
-**关键**：存库时传入 `watch_name`，输出中的 `item_ids` 列表收集起来，后面记录分析时用。
+save.py 的输出包含两个关键字段：
+- `item_ids`：新插入的 ID 列表，收集起来供步骤 7 记录分析用
+- `summary`：所有 items 的精简版（仅 source/title/content 前 150 字/url），**这就是步骤 4 分析用的数据**
 
-Sensor 调用方式：
-- Push 型（HN, GitHub, V2EX）：直接执行脚本
-- Push+CLI 型（Product Hunt）：`uv run python .claude/skills/fetch-product-hunt/scripts/fetch.py --limit 20 --featured`
-- Search 型（fetch-tavily, fetch-exa, fetch-brave-search, fetch-request-hunt, fetch-x, fetch-news-api, fetch-gnews, fetch-arxiv, fetch-openalex）：生成搜索词后通过 stdin 传入
-- Feed 型（fetch-rss）：`echo '{"feeds": [...], "max_per_feed": 20}' | uv run python .claude/skills/fetch-rss/scripts/fetch.py`
-- 混合型（fetch-reddit）：列表或搜索模式通过 stdin JSON 传入
+完整的 Sensor 调用示例见 `references/workflow.md`。
 
-### 4. 精简数据供分析
+### 4. 分析数据
 
-⚠️ **省 token 的关键步骤。不要把 sensor 原始 JSON 直接用于分析。**
+⚠️ **只用 save.py 输出的 `summary` 字段做分析，不要回头看 sensor 原始输出。**
 
-将本次采集的原始数据通过预处理脚本精简：
-
-```bash
-echo '{"items": [...]}' | uv run python .claude/skills/db-save-items/scripts/summarize.py --limit 80
-```
-
-输出精简版：每条 item 只保留 `source`、`title`、`content`（截断至 150 字）、`url`。
-这个精简版才是 LLM 分析的输入。原始数据已完整存入数据库，需要深挖时可以单独取。
-
-### 5. 分析数据
 - 选择合适的 Lens（参考 memory.md 中的偏好，默认 deep_insight）
 - 读取对应 lens skill 的分析框架
-- **用精简版数据作为分析输入**（不是原始 JSON，不是数据库查询结果）
+- **分析输入 = 步骤 3 中各 save.py 返回的 `summary` 数组合并**
 - 对数据进行分析，生成报告
 - 分析过程中自然识别高信号内容
 
-### 6. 保存报告
+如果 summary 中某条 item 信号很强但 150 字不够判断，可用 `db-query-items` 查完整记录，或用 `extract-content` 抓取原文。
+
+**不要创建临时文件或编写额外脚本。不要用 sensor 原始 JSON 做分析。**
+
+### 5. 保存报告
 使用 `save-report` skill 的指引保存报告和可能的 alert。
 
-### 7. 记录分析
+### 6. 记录分析
 使用 `db-save-analysis` skill 记录本次运行，传入步骤 3 收集的 `item_ids`：
 
 ```bash
 echo '{"watch_name": "...", "item_ids": [1,2,3,...], "report_path": "...", "item_count": N, "lens": "..."}' | uv run python .claude/skills/db-save-analysis/scripts/save.py
 ```
 
-### 8. 更新状态
+### 7. 更新状态
 更新 `watches/{watch-name}/state.json` 的 `last_run` 为当前时间。
 
-### 9. 推送通知
+### 8. 推送通知
 如果该 Watch 的 state.json 中配置了 `webhooks` 且 `webhooks.enabled: true`，调用 `webhook-notify` skill 推送。
 
 **消息组装**：读取 `webhooks.targets` 中每个 enabled target 的 `content` 字段，据此组装消息。相同 `content` 的 target 可合并一次调用。
@@ -95,7 +87,7 @@ echo '{"watch": "{watch-name}", "message": "[Signex] {watch-name} 情报更新\n
 
 如果 `webhooks` 不存在或 `enabled: false`，跳过此步。
 
-### 10. 收尾交互
+### 9. 收尾交互
 报告交付后，不要直接结束。根据本次运行的实际情况，选 1-2 个最相关的方向
 与用户对话。目的是校准信号、发现深挖机会、沉淀洞察。
 
@@ -119,6 +111,3 @@ echo '{"watch": "{watch-name}", "message": "[Signex] {watch-name} 情报更新\n
 - 问题要锚定到本次报告的具体内容上，不要泛泛地问"报告怎么样"
 - 用户说"挺好"或不想聊也是有效信号，不要强行引导
 - 不要暴露技术细节（不提文件名、配置项），只聊内容和方向
-
-## 参考
-详细决策树见 `references/workflow.md`。

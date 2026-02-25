@@ -25,6 +25,19 @@ def clean_string(s: str) -> str:
     return s.encode('utf-8', errors='surrogatepass').decode('utf-8', errors='ignore')
 
 
+def summarize_item(d: dict) -> dict:
+    """Extract compact fields for LLM analysis (saves tokens)."""
+    content = clean_string(d.get("content", "") or "")
+    if len(content) > 150:
+        content = content[:150] + "..."
+    return {
+        "source": d.get("source", ""),
+        "title": clean_string(d.get("title", "")),
+        "content": content,
+        "url": d.get("url", ""),
+    }
+
+
 def main():
     try:
         input_data = json.load(sys.stdin)
@@ -69,11 +82,15 @@ def main():
         for src in sources_seen:
             db.update_source_health(src, sensor_success)
 
+        # Build compact summary for LLM analysis
+        summary = [summarize_item(d) for d in items_data]
+
         print(json.dumps({
             "success": True,
             "inserted": result["inserted"],
             "total": len(items),
             "item_ids": result["item_ids"],
+            "summary": summary,
         }, ensure_ascii=False))
     finally:
         db.close()

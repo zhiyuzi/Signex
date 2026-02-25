@@ -17,8 +17,20 @@ echo '{"items": [...], "watch_name": "product-opportunities"}' | uv run python .
 uv run python .claude/skills/fetch-hacker-news/scripts/fetch.py | uv run python .claude/skills/db-save-items/scripts/save.py
 ```
 
-输出 JSON：`{"success": true, "inserted": N, "total": M, "item_ids": [1, 2, 3]}`
+输出 JSON：
+```json
+{
+  "success": true,
+  "inserted": 5,
+  "total": 10,
+  "item_ids": [1, 2, 3],
+  "summary": [
+    {"source": "...", "title": "...", "content": "前150字...", "url": "..."}
+  ]
+}
+```
 
 - `item_ids`：本次新插入的 item ID 列表，用于后续 `db-save-analysis` 标记
+- `summary`：所有 items 的精简版（仅 source/title/content 前 150 字/url），供 LLM 分析用，省 token
 - 自动去重：相同 (source, source_id) 不会重复插入
 - `watch_name`：可选，标记这批数据是哪个 watch 采集的

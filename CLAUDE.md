@@ -75,14 +75,13 @@
 1. 读取 Watch 的 intent.md 和 memory.md
 2. 根据意图决定需要哪些 Sensor（不要盲目调用所有 sensor）
 3. 对 search 类 sensor，自己生成合适的搜索词（包含年月，注意时效性）
-4. 采集数据，存入数据库（带 watch_name 归属标记），收集返回的 item_ids
-5. 将本次采集的数据精简后再分析——只保留标题、摘要、链接，去掉原始 metadata 等无关字段。完整数据已入库，需要深挖时再取。具体精简方式见 `run-watch` 技能说明
-6. 选择合适的 Lens，用精简后的数据进行分析并生成报告（根据 intent 和 memory 自然识别高信号内容——每个 Watch 的"重要"标准不同）
-7. 保存报告到 reports/{date}/{watch-name}/；如有高信号内容，同时输出 alert
-8. 记录分析（db-save-analysis，传入步骤 4 的 item_ids）
-9. 更新 state.json 中的 last_run
-10. 推送通知：如果该 Watch 配置了 webhook 且已启用，调用 webhook-notify 推送报告摘要
-11. 收尾交互：根据本次报告的具体内容，主动与用户对话（校准信号、探测深挖意愿、建议沉淀洞察等）
+4. 采集数据，存入数据库（带 watch_name 归属标记），收集返回的 item_ids 和 summary
+5. 选择合适的 Lens，用 save.py 返回的 `summary` 字段进行分析并生成报告（根据 intent 和 memory 自然识别高信号内容——每个 Watch 的"重要"标准不同）
+6. 保存报告到 reports/{date}/{watch-name}/；如有高信号内容，同时输出 alert
+7. 记录分析（db-save-analysis，传入步骤 4 的 item_ids）
+8. 更新 state.json 中的 last_run
+9. 推送通知：如果该 Watch 配置了 webhook 且已启用，调用 webhook-notify 推送报告摘要
+10. 收尾交互：根据本次报告的具体内容，主动与用户对话（校准信号、探测深挖意愿、建议沉淀洞察等）
 
 ## Lens 选择指引
 
