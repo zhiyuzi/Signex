@@ -12,14 +12,22 @@ description: 交互式 Webhook 配置向导。引导用户选择平台、填写 
 ## 流程
 
 1. 读取 `knowledge/webhook-setup-guide.md` 获取平台配置知识
-2. 确认目标 Watch（如果用户没指定，询问）
-3. 引导用户完成配置：
-   - 选平台（目前仅飞书，其他待扩展）
+2. **确认目标 Watch**：
+   - 读取 `watches/index.md` 获取所有 active Watch 列表
+   - 如果用户已指定 Watch，直接使用
+   - 如果只有一个 active Watch，默认使用它，无需询问
+   - 如果有多个 active Watch 且用户未指定，**必须列出让用户选择**，不得自行推断
+3. **去重检查**：
+   - 读取目标 Watch 的 `state.json`，检查 `webhooks.targets` 中是否已有相同 `platform + url` 的 target
+   - 如果已存在完全相同的配置，告知用户"这个 Webhook 已经配置过了"，询问是否要修改内容偏好或其他设置
+   - 如果同平台但不同 URL，正常追加
+4. 引导用户完成配置：
+   - 选平台（飞书、Discord 已支持，其他待扩展）
    - 填 Webhook URL（引导用户在 IM 工具中创建机器人获取）
    - 填 secret（可选，飞书签名校验模式需要）
    - 选推送内容偏好（content 字段：summary / brief / key_findings / 自定义）
    - 确认 enabled 状态
-4. 将配置写入 `watches/{watch}/state.json` 的 `webhooks` 字段
+5. 将配置写入 `watches/{watch}/state.json` 的 `webhooks` 字段
 
 ## 写入规则
 
