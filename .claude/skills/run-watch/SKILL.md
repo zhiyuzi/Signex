@@ -13,6 +13,8 @@ description: 执行某个 Watch 的完整情报采集与分析流程。当用户
 - 读取 `watches/{watch-name}/state.json` — 运行状态
 - 读取 `profile/identity.md` — 用户身份
 
+**意图质量判断**：读完 intent.md 后，感知这份意图是否足够丰富来指导有意义的分析。如果感觉意图过于模糊或单薄（不论具体缺什么），建议用户先用 watch-shape 深化一下再跑，效果会更好。用户坚持要跑就跑，不强制。
+
 ### 2. 决定 Sensor 策略
 
 ⚠️ **必须先读取 `references/workflow.md`**，其中包含：Sensor 选择决策表、搜索词生成规则、每个 Sensor 的完整调用示例。

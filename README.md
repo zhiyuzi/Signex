@@ -64,7 +64,13 @@ Architecturally, **Claude Code IS the runtime.** There is no standalone app, ser
 }}%%
 
 flowchart TB
-  W["Watch<br/>intent.md + memory.md"]:::core --> S["Sensor Selection"]:::core
+  UA["You · shapes & calibrates"]:::actor
+  UA -. "watch-shape · feedback · calibrate" .-> W
+  UA -. "identity-shape · shape profile" .-> ID
+
+  ID["Identity<br/>identity.md"]:::identity -. "context" .-> W
+
+  W["Watches<br/>intent.md + memory.md"]:::core --> S["Sensor Selection"]:::core
 
   subgraph Sensors["Sensors (extensible)"]
     direction TB
@@ -90,12 +96,11 @@ flowchart TB
   end
 
   L1 & L2 & L3 & L4 & L5 --> R["Reports & Alerts"]:::out
-  R --> U["You"]:::actor
-
-  U -. "feedback · calibrate signals · adjust scope" .-> W
-  U -. "cross-watch insights" .-> V["Vault"]:::vault
+  R --> UB["You · reads & iterates"]:::actor
+  UB -. "cross-watch insights" .-> V["Vault"]:::vault
 
   classDef core      fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px,color:#0F172A,rx:14,ry:14
+  classDef identity  fill:#F5F3FF,stroke:#7C3AED,stroke-width:1.6px,color:#0F172A,rx:12,ry:12
   classDef sensor    fill:#ECFEFF,stroke:#06B6D4,stroke-width:1.6px,color:#0F172A,rx:12,ry:12
   classDef sensorAlt fill:#F0FDFA,stroke:#14B8A6,stroke-width:1.6px,color:#0F172A,stroke-dasharray:4 3,rx:12,ry:12
   classDef store     fill:#F1F5F9,stroke:#64748B,stroke-width:1.7px,color:#0F172A,rx:14,ry:14
@@ -179,6 +184,7 @@ Sensors fire, data flows into SQLite, the lens analyzes, and you get a report.
 | `fetch-x` | X / Twitter search | Yes | [developer.x.com](https://developer.x.com/en/portal/dashboard) |
 | `fetch-arxiv` | arXiv preprints | — | |
 | `fetch-openalex` | OpenAlex academic papers | Yes | [openalex.org](https://openalex.org/settings/api) |
+| `extract-content` | Extract full article text from URLs (supplements sensor data when needed) | — | |
 
 ### Lenses (analysis)
 
@@ -199,17 +205,28 @@ Sensors fire, data flows into SQLite, the lens analyzes, and you get a report.
 | `db-stats` | Run history & statistics |
 | `db-source-health` | Data source health monitoring |
 
-### Actions & Orchestration
+### Shaping
+
+| Skill | Purpose |
+|-------|---------|
+| `identity-shape` | Conversational user profile shaping & iteration |
+| `watch-shape` | Conversational watch cognitive structure design & iteration |
+
+### Pipeline
 
 | Skill | Purpose |
 |-------|---------|
 | `run-watch` | Execute full watch cycle (collect → analyze → report) |
 | `save-report` | Write reports and alerts to disk |
 | `update-memory` | Integrate user feedback into watch memory |
-| `extract-content` | Extract full article text from URLs |
 | `webhook-notify` | Push report summary to IM tools (Feishu, Discord, WeCom, etc.) |
-| `webhook-setup` | Interactive webhook configuration wizard |
+
+### Setup
+
+| Skill | Purpose |
+|-------|---------|
 | `setup` | Project initialization (directories, templates, database) |
+| `webhook-setup` | Interactive webhook configuration wizard |
 | `skill-creator` | Guide for creating new skills |
 
 ## Project Structure
@@ -223,7 +240,7 @@ signex/
 │   ├── index.md               # Watch registry
 │   └── {watch-name}/
 │       ├── intent.md          # What to monitor
-│       ├── memory.md          # Accumulated feedback
+│       ├── memory.md          # Feedback memory & cognitive evolution
 │       └── state.json         # Run state
 ├── vault/                     # Cross-watch insights
 │   ├── index.md               # Vault index

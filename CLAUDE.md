@@ -28,13 +28,20 @@
 
 用户身份信息在 `profile/identity.md`。每次分析前先读取，理解用户的背景和偏好。
 
+**何时建议 identity-shape：** 开场交互时读取 identity.md，感知画像是否需要更新。以下情况可以自然提及（不要每次都提，选最相关的一条）：
+
+- 画像还是空模板或内容单薄
+- Watch 方向已经明显变化，但画像中的决策场景描述还停留在旧状态
+- 对话中用户流露出决策场景的转变
+- 长期使用后，用户之前意识到的信息盲区可能已被部分填补，值得回顾
+
 ## Watch 管理
 
 当前所有 Watch 列表见 `watches/index.md`。
 
 每个 Watch 的结构：
-- `intent.md` — 用户描述的监控方向
-- `memory.md` — 历史反馈的压缩总结（你来维护）
+- `intent.md` — 监控意图与认知结构
+- `memory.md` — 反馈记忆与认知演进轨迹（你来维护）
 - `state.json` — 运行状态：`check_interval`、`last_run`、`status`
 
 ## 开场交互
@@ -55,7 +62,7 @@
 **输出两层内容**：
 
 1. **态势感知**（3-5 句）：各 Watch 运行状态概览，哪些到期该跑了，今天有没有新报告或 alert。
-2. **行动建议**（2-3 条）：结合 intent、memory 和用户画像，给出具体的、可直接回复"好"就能执行的建议。不要泛泛地说"你可以运行 watch"，而是像了解用户的分析师一样给出有上下文的建议。如果有 Watch 尚未配置 webhook 推送，可以作为建议之一提及。
+2. **行动建议**（2-3 条）：结合 intent、memory 和用户画像，给出具体的、可直接回复"好"就能执行的建议。不要泛泛地说"你可以运行 watch"，而是像了解用户的分析师一样给出有上下文的建议。如果有 Watch 尚未配置 webhook 推送，可以作为建议之一提及。如果画像需要更新（参见"用户身份"章节的判断策略），可以建议使用 identity-shape。如果某个 Watch 的 intent.md 结构简陋，可以建议用 watch-shape 深化。
 
 > 示例（仅供参考风格，实际内容必须基于真实数据）：
 >
@@ -72,7 +79,7 @@
 
 当用户要求运行某个 Watch 时，使用 `run-watch` 技能。核心原则：**采集什么就分析什么，不翻旧账。**
 
-1. 读取 Watch 的 intent.md 和 memory.md
+1. 读取 Watch 的 intent.md、memory.md 和 profile/identity.md
 2. 根据意图决定需要哪些 Sensor（不要盲目调用所有 sensor）
 3. 对 search 类 sensor，自己生成合适的搜索词（包含年月，注意时效性）
 4. 采集数据，存入数据库（带 watch_name 归属标记），收集返回的 item_ids 和 summary
@@ -105,9 +112,9 @@
 
 在自然对话中，根据用户的表达主动维护以下文件。这些是活的文档，随对话演进而变化。
 
-### memory.md — 反馈沉淀
+### memory.md — 认知演进轨迹
 
-**时机**：用户对报告或分析给出反馈、偏好、修正时。
+**时机**：用户对报告或分析给出反馈、偏好、修正时，或对话中产生认知层面的变化时。
 
 > 用户："这次分析太泛了，AI coding tools 我只关心 IDE 级产品，插件不要"
 > → 读 `watches/ai-coding-tools/memory.md`
@@ -116,6 +123,9 @@
 
 > 用户："上次的 dual_take 分析很好，以后默认用这个 lens"
 > → 在 memory.md 中记录 lens 偏好
+
+> 用户："我发现我一直在用错误的框架看这个领域"
+> → 在 memory.md 的"认知演进"类别中记录框架变化
 
 ### intent.md — 监控方向调整
 
@@ -157,6 +167,7 @@
 > → 创建 `watches/ai-news-products/` 目录
 > → 按 `setup` 技能中的 Watch 文件模板初始化 intent.md、memory.md、state.json
 > → 更新 `watches/index.md`
+> → 建议使用 `watch-shape` 充实 intent（不强制，用户可以先跑再迭代）
 
 ## Skill 动态拓展
 

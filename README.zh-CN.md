@@ -64,7 +64,13 @@ Signex 是你的 AI 情报分析师。你定义关注方向（Watch），它自�
 }}%%
 
 flowchart TB
-  W["Watch<br/>intent.md + memory.md"]:::core --> S["Sensor 选择"]:::core
+  UA["你 · 塑造 & 校准"]:::actor
+  UA -. "watch-shape · 反馈 · 校准" .-> W
+  UA -. "identity-shape · 塑造画像" .-> ID
+
+  ID["Identity<br/>identity.md"]:::identity -. "上下文" .-> W
+
+  W["Watches<br/>intent.md + memory.md"]:::core --> S["Sensor 选择"]:::core
 
   subgraph Sensors["探针层 (可扩展)"]
     direction TB
@@ -90,12 +96,11 @@ flowchart TB
   end
 
   L1 & L2 & L3 & L4 & L5 --> R["报告 & 警报"]:::out
-  R --> U["你"]:::actor
-
-  U -. "反馈 · 校准信号 · 调整方向" .-> W
-  U -. "跨域洞察" .-> V["沉淀库"]:::vault
+  R --> UB["你 · 阅读 & 迭代"]:::actor
+  UB -. "跨域洞察" .-> V["沉淀库"]:::vault
 
   classDef core      fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px,color:#0F172A,rx:14,ry:14
+  classDef identity  fill:#F5F3FF,stroke:#7C3AED,stroke-width:1.6px,color:#0F172A,rx:12,ry:12
   classDef sensor    fill:#ECFEFF,stroke:#06B6D4,stroke-width:1.6px,color:#0F172A,rx:12,ry:12
   classDef sensorAlt fill:#F0FDFA,stroke:#14B8A6,stroke-width:1.6px,color:#0F172A,stroke-dasharray:4 3,rx:12,ry:12
   classDef store     fill:#F1F5F9,stroke:#64748B,stroke-width:1.7px,color:#0F172A,rx:14,ry:14
@@ -179,6 +184,7 @@ Signex 根据你的意图创建 Watch，选择合适的 Sensor，准备就绪。
 | `fetch-x` | X / Twitter 搜索 | 是 | [developer.x.com](https://developer.x.com/en/portal/dashboard) |
 | `fetch-arxiv` | arXiv 预印本 | — | |
 | `fetch-openalex` | OpenAlex 学术论文 | 是 | [openalex.org](https://openalex.org/settings/api) |
+| `extract-content` | 从 URL 提取文章全文（Sensor 采集内容不足时补全） | — | |
 
 ### Lens（分析视角）
 
@@ -199,17 +205,28 @@ Signex 根据你的意图创建 Watch，选择合适的 Sensor，准备就绪。
 | `db-stats` | 运行历史统计 |
 | `db-source-health` | 数据源健康监控 |
 
-### 动作 & 编排
+### 塑造（Shaping）
+
+| Skill | 用途 |
+|-------|------|
+| `identity-shape` | 对话式用户画像塑造与迭代 |
+| `watch-shape` | 对话式 Watch 认知结构设计与迭代 |
+
+### 编排（Pipeline）
 
 | Skill | 用途 |
 |-------|------|
 | `run-watch` | 执行完整 Watch 周期（采集 → 分析 → 报告） |
 | `save-report` | 写入报告和警报 |
 | `update-memory` | 将用户反馈整合到 Watch 记忆 |
-| `extract-content` | 从 URL 提取文章全文 |
 | `webhook-notify` | 报告生成后推送摘要到 IM 工具（飞书、Discord、企业微信等） |
-| `webhook-setup` | 交互式 Webhook 配置向导 |
+
+### 初始化 & 扩展（Setup）
+
+| Skill | 用途 |
+|-------|------|
 | `setup` | 项目初始化（目录、模板、数据库） |
+| `webhook-setup` | 交互式 Webhook 配置向导 |
 | `skill-creator` | 创建新 Skill 的向导 |
 
 ## 项目结构
@@ -223,7 +240,7 @@ signex/
 │   ├── index.md               # Watch 索引
 │   └── {watch-name}/
 │       ├── intent.md          # 监控意图
-│       ├── memory.md          # 反馈记忆
+│       ├── memory.md          # 反馈记忆与认知演进
 │       └── state.json         # 运行状态
 ├── vault/                     # 跨 Watch 洞察沉淀
 │   ├── index.md               # 沉淀库索引

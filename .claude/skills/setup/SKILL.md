@@ -51,8 +51,16 @@ description: 初始化 Signex 项目。创建用户数据目录和模板文件�
 - Role: (e.g., independent developer, product manager, researcher)
 - Domain: (e.g., AI/ML, web development, fintech)
 
-## Preferences
+## Decision Context
+<!-- 情报服务什么决策？可通过 identity-shape 对话填充 -->
+
+## Information Preferences
 - Report language: (e.g., Chinese, English)
+
+## Known Blind Spots
+<!-- 你意识到的信息薄弱领域。可通过 identity-shape 对话发现 -->
+
+## Preferences
 - Focus: actionable insights over raw data
 ```
 
@@ -91,6 +99,18 @@ uv run python -c "from src.store.database import Database; db = Database(); db.i
 ## Key Interests
 - （关注点 1）
 - （关注点 2）
+
+## Decision Context
+<!-- 这个 Watch 服务什么决策？可通过 watch-shape 对话填充 -->
+
+## Competing Hypotheses
+<!-- 关于这个领域的走向，有哪些竞争假设？可通过 watch-shape 对话填充 -->
+
+## Known Blind Spots
+<!-- 用户意识到的信息盲区。可通过 watch-shape 对话发现 -->
+
+## Frame-Breaking Signals
+<!-- 什么信号会让你更新心智模型？可通过 watch-shape 对话填充 -->
 
 ## Exclude
 - （排除项，可选）
